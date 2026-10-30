@@ -161,6 +161,7 @@ declare
   v_required_xp integer;
   v_queue_id uuid;
   v_previous_key text;
+  v_previous_id text;
   v_xp integer;
   v_completed text[];
   v_existing public.rank_queue%rowtype;
@@ -175,6 +176,15 @@ begin
   -- Acquire locks in a consistent order: player first, then lesson.
   perform pg_advisory_xact_lock(hashtextextended(p_user_id::text, 1));
   perform pg_advisory_xact_lock(hashtextextended(p_lesson_key, 0));
+
+  if exists (
+    select 1
+      from public.rank_match_players p
+      join public.rank_matches m on m.id = p.match_id
+     where p.user_id = p_user_id and m.status = 'active'
+  ) then
+    raise exception 'คุณมีการแข่งขัน Ranked ที่ยังไม่จบอยู่แล้ว' using errcode = 'P0001';
+  end if;
 
   select l.*
     into v_lesson
@@ -212,15 +222,18 @@ begin
   end if;
 
   -- Check lesson progression using the preceding lesson in the same course.
-  select coalesce(prev.content->>'lesson_key', prev.id::text)
-    into v_previous_key
+  select coalesce(prev.content->>'lesson_key', prev.id::text), prev.id::text
+    into v_previous_key, v_previous_id
   from public.lessons prev
   where prev.course_id = v_lesson.course_id
+    and prev.published = true
     and prev.position < v_lesson.position
   order by prev.position desc
   limit 1;
 
-  if v_previous_key is not null and not (v_previous_key = any(v_completed)) then
+  if v_previous_key is not null
+     and not (v_previous_key = any(v_completed))
+     and not (v_previous_id = any(v_completed)) then
     raise exception 'กรุณาผ่านบทเรียนก่อนหน้าก่อนเข้า Ranked' using errcode = 'P0001';
   end if;
 
@@ -286,6 +299,11 @@ as $$
 declare
   v_queue_id uuid;
 begin
+  if p_user_id is null then
+    raise exception 'ข้อมูลผู้เล่นไม่ถูกต้อง' using errcode = '22023';
+  end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_user_id::text, 1));
+
   update public.rank_queue
   set status = 'cancelled', cancelled_at = clock_timestamp()
   where user_id = p_user_id and status = 'waiting'

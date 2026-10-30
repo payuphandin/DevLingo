@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 function errorStatus(message: string) {
   if (message.includes("XP ไม่เพียงพอ") || message.includes("XP ยังไม่ถึง") ||
-      message.includes("บทเรียนก่อนหน้า") || message.includes("คิว Ranked")) return 409;
+      message.includes("บทเรียนก่อนหน้า") || message.includes("คิว Ranked") || message.includes("การแข่งขัน Ranked")) return 409;
   if (message.includes("ไม่พบบทเรียน")) return 404;
   return 400;
 }
@@ -74,6 +74,7 @@ export async function GET(request: NextRequest) {
     console.error("Ranked match lookup failed:", matchError?.message);
     return NextResponse.json({ error: "ไม่พบข้อมูลการแข่งขัน" }, { status: 500 });
   }
+  if (match.status !== "active") return NextResponse.json({ data: { status: "idle" } });
 
   return NextResponse.json({ data: { status: "matched", match } });
 }

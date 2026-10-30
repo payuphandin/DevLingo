@@ -74,7 +74,7 @@ function RankedQueueContent() {
 
   const join = async () => {
     setBusy(true); setError("");
-    try { const data = await request("POST", { action: "join", lessonKey }); setQueue(data); setSeconds(0); }
+    try { await request("POST", { action: "join", lessonKey }); await refreshQueue(); setSeconds(0); }
     catch (e) { setError(e instanceof Error ? e.message : "เข้าคิวไม่สำเร็จ"); }
     finally { setBusy(false); }
   };
@@ -113,7 +113,7 @@ function RankedQueueContent() {
           {error && <div role="alert" className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{error}</div>}
           {queue.status === "idle" && <div className="mt-7"><button onClick={() => void join()} disabled={busy || !lessonKey} className="primary-btn w-full justify-center py-4 text-base disabled:opacity-60">{busy ? <LoaderCircle className="animate-spin" size={19}/> : <Swords size={19}/>} ค้นหาคู่แข่ง</button><p className="mt-3 text-center text-xs leading-5 text-slate-400">จับคู่กับผู้เล่นที่เลือกบทเรียนเดียวกันและผ่านเงื่อนไข XP</p></div>}
           {queue.status === "waiting" && <div className="mt-7 rounded-2xl border border-emerald-100 bg-[#f4fbf7] p-6 text-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#24a982] shadow-sm"><LoaderCircle size={30} className="animate-spin"/></div><h3 className="mt-4 text-lg font-extrabold">กำลังค้นหาคู่แข่ง</h3><p className="mt-1 text-sm text-slate-500">รอผู้เล่นที่เลือกบทเรียนเดียวกันเข้าร่วม</p><p className="mt-3 flex items-center justify-center gap-2 text-xs font-bold text-[#168565]"><Clock3 size={14}/> ค้นหาแล้ว {seconds} วินาที</p><button onClick={() => void cancel()} disabled={busy} className="soft-btn mt-5 w-full justify-center text-rose-600">{busy ? "กำลังยกเลิก…" : <><XCircle size={16}/> ยกเลิกการค้นหา</>}</button></div>}
-          {queue.status === "matched" && <div className="mt-7 rounded-2xl border border-emerald-200 bg-[#f1fbf5] p-6 text-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#24a982] shadow-sm"><Trophy size={30}/></div><h3 className="mt-4 text-xl font-extrabold text-[#168565]">จับคู่สำเร็จ!</h3><p className="mt-2 text-sm leading-6 text-slate-600">พบคู่แข่งสำหรับบทเรียนนี้แล้ว ระบบสร้างห้องแข่งขันเรียบร้อย</p><p className="mt-4 break-all rounded-xl bg-white p-3 text-xs text-slate-400">Match ID: {queue.match.id}</p><p className="mt-3 text-xs text-slate-500">หน้าจอแข่งขันจะเชื่อมต่อในขั้นตอนถัดไป</p><button onClick={() => router.push("/learning")} className="primary-btn mt-5 w-full justify-center">กลับเส้นทางการเรียน</button></div>}
+          {queue.status === "matched" && <div className="mt-7 rounded-2xl border border-emerald-200 bg-[#f1fbf5] p-6 text-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#24a982] shadow-sm"><Trophy size={30}/></div><h3 className="mt-4 text-xl font-extrabold text-[#168565]">จับคู่สำเร็จ!</h3><p className="mt-2 text-sm leading-6 text-slate-600">พบคู่แข่งสำหรับบทเรียนนี้แล้ว ระบบสร้างห้องแข่งขันเรียบร้อย</p><p className="mt-4 break-all rounded-xl bg-white p-3 text-xs text-slate-400">Match ID: {queue.match.id}</p><p className="mt-3 text-xs text-slate-500">เข้าสู่ห้องแข่งขันเพื่อเริ่มทำแบบทดสอบได้ทันที</p><button onClick={() => router.push(`/ranked/match/${encodeURIComponent(queue.match.id)}`)} className="primary-btn mt-5 w-full justify-center">เข้าสู่ห้องแข่งขัน <Swords size={17}/></button></div>}
         </div>
       </section>
     </main>

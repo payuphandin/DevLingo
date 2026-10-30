@@ -159,7 +159,7 @@ export default function LearningPage() {
 
           <div className="mt-6 flex gap-3 rounded-2xl border border-[#dceee5] bg-[#f4fbf7] p-4 text-sm text-slate-600">
             <CheckCircle2 className="shrink-0 text-[#24a982]" size={20} />
-            <p><strong className="text-slate-800">ระบบ XP:</strong> ต้องตอบถูกอย่างน้อย 4 ใน 5 ข้อเพื่อผ่านบท คะแนนและสถานะความก้าวหน้าจะถูกบันทึกตามระบบเดิม</p>
+            <p><strong className="text-slate-800">ระบบ XP:</strong> ต้องตอบถูกอย่างน้อย 4 ข้อ (หรือทุกข้อหากบทเรียนมีน้อยกว่า 4 ข้อ) เพื่อผ่านบท คะแนนและสถานะความก้าวหน้าจะถูกบันทึกตามระบบเดิม</p>
           </div>
         </section>
       </div>

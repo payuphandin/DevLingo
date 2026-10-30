@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Volume2, X, LockKeyhole } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
 import { emptyProgress, loadLearnerProgress, saveLearnerProgress, type LearnerProgress } from "@/lib/progress";
@@ -118,11 +118,11 @@ function LessonRunner() {
   const question = questions[index];
   const score = answers.filter(Boolean).length;
 
-  const finish = async (finalAnswers: boolean[]) => {
+  const finish = useCallback(async (finalAnswers: boolean[]) => {
     if (!lesson) return;
     setSaveError("");
     const correct = finalAnswers.filter(Boolean).length;
-    const didPass = correct >= 4;
+    const didPass = correct >= Math.min(4, questions.length);
     setPassed(didPass);
 
     const { progress: current } = await loadLearnerProgress();
@@ -148,9 +148,9 @@ function LessonRunner() {
 
     setEarned(xp);
     setFinished(true);
-  };
+  }, [lesson, questions.length]);
 
-  const goToNextQuestion = async () => {
+  const goToNextQuestion = useCallback(async () => {
     if (!checked || movingNext) return;
     setMovingNext(true);
     const finalAnswers = answers;
@@ -165,7 +165,7 @@ function LessonRunner() {
       setSaveError("");
     }
     setMovingNext(false);
-  };
+  }, [checked, movingNext, answers, index, questions.length, finish]);
 
   useEffect(() => {
     if (!checked || !checkedResult || movingNext) return;
@@ -175,7 +175,7 @@ function LessonRunner() {
     }
     const timer = window.setTimeout(() => setCountdown((value) => value - 1), 1000);
     return () => window.clearTimeout(timer);
-  }, [checked, checkedResult, countdown, movingNext]);
+  }, [checked, checkedResult, countdown, movingNext, goToNextQuestion]);
 
   const checkAnswer = async () => {
     if (!lesson || !question || selected === null || checked) return;
@@ -258,7 +258,7 @@ function LessonRunner() {
           <p className="eyebrow mt-6">LESSON RESULT</p>
           <h1 className="mt-2 text-3xl font-extrabold">{passed ? "เก่งมาก! ผ่านบทเรียนแล้ว" : "ยังไม่ผ่าน ลองอีกครั้งนะ"}</h1>
           <p className="mt-3 text-slate-500">
-            {passed ? "ปลดล็อกบทถัดไปได้ตามเกณฑ์ XP" : "ต้องตอบถูกอย่างน้อย 4 จาก 5 ข้อจึงจะผ่าน และยังไม่ได้รับ XP"}
+            {passed ? "ปลดล็อกบทถัดไปได้ตามเกณฑ์ XP" : `ต้องตอบถูกอย่างน้อย ${Math.min(4, questions.length)} จาก ${questions.length} ข้อจึงจะผ่าน และยังไม่ได้รับ XP`}
           </p>
           <div className="my-7 grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-[#f2faf5] p-5">

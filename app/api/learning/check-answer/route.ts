@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(questionId) ||
     !Number.isInteger(optionPosition) ||
-    optionPosition < 1 ||
+    optionPosition < 0 ||
     optionPosition > 4
   ) {
     return NextResponse.json({ error: "รหัสโจทย์หรือตัวเลือกไม่ถูกต้อง" }, { status: 400 });
