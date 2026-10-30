@@ -32,6 +32,8 @@ function LessonRunner() {
   const [checked, setChecked] = useState(false);
   const [checking, setChecking] = useState(false);
   const [checkedResult, setCheckedResult] = useState<CheckedAnswer | null>(null);
+  const [countdown, setCountdown] = useState(15);
+  const [movingNext, setMovingNext] = useState(false);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [finished, setFinished] = useState(false);
   const [earned, setEarned] = useState(0);
@@ -148,8 +150,35 @@ function LessonRunner() {
     setFinished(true);
   };
 
+  const goToNextQuestion = async () => {
+    if (!checked || movingNext) return;
+    setMovingNext(true);
+    const finalAnswers = answers;
+    if (index === questions.length - 1) {
+      await finish(finalAnswers);
+    } else {
+      setIndex((currentIndex) => currentIndex + 1);
+      setSelected(null);
+      setChecked(false);
+      setCheckedResult(null);
+      setCountdown(15);
+      setSaveError("");
+    }
+    setMovingNext(false);
+  };
+
+  useEffect(() => {
+    if (!checked || !checkedResult || movingNext) return;
+    if (countdown <= 0) {
+      void goToNextQuestion();
+      return;
+    }
+    const timer = window.setTimeout(() => setCountdown((value) => value - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [checked, checkedResult, countdown, movingNext]);
+
   const checkAnswer = async () => {
-    if (!lesson || !question || selected === null) return;
+    if (!lesson || !question || selected === null || checked) return;
 
     setChecking(true);
     setSaveError("");
@@ -179,21 +208,8 @@ function LessonRunner() {
       };
       setCheckedResult(result);
       setChecked(true);
-
-      // บันทึกผลและไปข้อถัดไปอัตโนมัติหลังแสดงผลตรวจคำตอบสั้น ๆ
-      const finalAnswers = [...answers, result.correct];
-      setAnswers(finalAnswers);
-      await new Promise((resolve) => setTimeout(resolve, 650));
-
-      if (index === questions.length - 1) {
-        await finish(finalAnswers);
-      } else {
-        setIndex((currentIndex) => currentIndex + 1);
-        setSelected(null);
-        setChecked(false);
-        setCheckedResult(null);
-        setSaveError("");
-      }
+      setCountdown(15);
+      setAnswers((current) => [...current, result.correct]);
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : "ตรวจคำตอบไม่สำเร็จ");
     } finally {
@@ -354,9 +370,18 @@ function LessonRunner() {
               {checking ? "กำลังตรวจคำตอบ…" : "ตรวจคำตอบ"} <ArrowRight size={17} />
             </button>
           ) : (
-            <button disabled className="primary-btn disabled:cursor-wait disabled:opacity-70">
-              {checking ? "กำลังไปต่อ…" : "ตรวจแล้ว"} <ArrowRight size={17} />
-            </button>
+            <div className="flex flex-col items-end gap-2">
+              <button
+                onClick={() => void goToNextQuestion()}
+                disabled={movingNext}
+                className="primary-btn disabled:cursor-wait disabled:opacity-70"
+              >
+                {movingNext ? "กำลังไปต่อ…" : index === questions.length - 1 ? "ดูผลคะแนน" : "ไปข้อถัดไป"} <ArrowRight size={17} />
+              </button>
+              <p className="text-xs text-slate-500">
+                ไปต่ออัตโนมัติใน {countdown} วินาที
+              </p>
+            </div>
           )}
         </div>
       </section>
