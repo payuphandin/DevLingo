@@ -37,6 +37,7 @@ export async function GET() {
     .from("lessons")
     .select("id,title,description,content,position,estimated_minutes")
     .eq("course_id", course.id)
+    .eq("published", true)
     .order("position", { ascending: true });
 
   if (error) {
@@ -48,6 +49,7 @@ export async function GET() {
     const content = (row.content ?? {}) as Record<string, unknown>;
     return {
       id: typeof content.lesson_key === "string" ? content.lesson_key : row.id,
+      databaseId: row.id,
       title: row.title,
       sub: row.description ?? "",
       level: typeof content.level === "string" ? content.level : "Beginner",

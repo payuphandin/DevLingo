@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, LockKeyhole, Play, Star, Trophy, Swords } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, LockKeyhole, Play, Star, Trophy } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
 import { emptyProgress, loadLearnerProgress, type LearnerProgress } from "@/lib/progress";
 import type { LessonSummary } from "@/lib/lesson-types";
@@ -126,14 +126,6 @@ export default function LearningPage() {
                       {lesson.level} · {lesson.mins} นาที · {lesson.xp} XP · ต้องมี {lesson.requiredXp} XP
                     </p>
                   </div>
-                  {unlocked && email && progress.xp >= lesson.xp && (
-                    <Link
-                      href={`/ranked?lesson=${encodeURIComponent(lesson.id)}`}
-                      className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 text-xs font-extrabold text-violet-700 transition hover:bg-violet-100"
-                    >
-                      <Swords size={15} /> Ranked
-                    </Link>
-                  )}
                   <Link
                     href={unlocked && !done ? `/learning/lesson?lesson=${encodeURIComponent(lesson.id)}` : "#"}
                     aria-disabled={!unlocked || done}

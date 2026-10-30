@@ -79,14 +79,14 @@ export default function RankedMatchPage() {
   };
 
   if (loading && !data) return <main className="shell flex min-h-screen items-center justify-center"><div className="panel p-8 text-center"><LoaderCircle className="mx-auto animate-spin text-[#24a982]" size={30}/><p className="mt-3 font-bold">กำลังโหลดห้องแข่งขัน…</p></div></main>;
-  if (!data) return <main className="shell flex min-h-screen items-center justify-center p-5"><section className="panel max-w-lg p-8 text-center"><XCircle className="mx-auto text-rose-500" size={36}/><h1 className="mt-4 text-xl font-extrabold">เปิดการแข่งขันไม่ได้</h1><p role="alert" className="mt-3 text-sm text-rose-600">{error}</p><Link href="/learning" className="primary-btn mt-6">กลับเส้นทางการเรียน</Link></section></main>;
+  if (!data) return <main className="shell flex min-h-screen items-center justify-center p-5"><section className="panel max-w-lg p-8 text-center"><XCircle className="mx-auto text-rose-500" size={36}/><h1 className="mt-4 text-xl font-extrabold">เปิดการแข่งขันไม่ได้</h1><p role="alert" className="mt-3 text-sm text-rose-600">{error}</p><Link href="/ranked" className="primary-btn mt-6">กลับเส้นทางการเรียน</Link></section></main>;
 
   const finished = data.match.status !== "active";
   const label = data.me.result === "winner" ? "คุณชนะการแข่งขัน!" : data.me.result === "loser" ? "คุณแพ้การแข่งขัน" : data.me.result === "forfeit" ? "หมดเวลา — ถูกปรับแพ้" : data.me.result === "draw" ? "เสมอ — ไม่มีการเปลี่ยน XP" : "การแข่งขันสิ้นสุด";
 
   return (
     <main className="shell min-h-screen py-6 md:py-10"><div className="mx-auto max-w-3xl">
-      <Link href="/learning" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500"><ArrowLeft size={17}/> ออกจากห้องแข่งขัน</Link>
+      <Link href="/ranked" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500"><ArrowLeft size={17}/> ออกจากห้องแข่งขัน</Link>
       <section className="mt-6 overflow-hidden rounded-[28px] border border-[#e5ece7] bg-white shadow-[0_18px_55px_rgba(28,65,52,.07)]">
         <header className="bg-[#172d35] px-6 py-7 text-white md:px-9">
           <div className="flex items-center justify-between"><span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-extrabold tracking-widest text-emerald-200"><Swords size={14}/> RANKED 1V1</span><span className="text-xs font-bold text-slate-300">{finished ? "MATCH FINISHED" : "LIVE MATCH"}</span></div>
@@ -106,7 +106,7 @@ export default function RankedMatchPage() {
               <div className="rounded-2xl bg-[#f2faf5] p-4"><p className="text-xs text-slate-500">XP ก่อนแข่ง</p><p className="mt-1 text-xl font-extrabold">{data.me.xpBefore ?? "—"}</p></div>
               <div className="rounded-2xl bg-[#f2faf5] p-4"><p className="text-xs text-slate-500">XP เปลี่ยนแปลง</p><p className={"mt-1 text-xl font-extrabold " + ((data.me.xpChange ?? 0) >= 0 ? "text-[#168565]" : "text-rose-600")}>{data.me.xpChange == null ? "—" : (data.me.xpChange > 0 ? "+" : "") + data.me.xpChange}</p></div>
             </div>
-            <p className="mt-4 text-sm font-bold text-slate-600">XP คงเหลือ: {data.me.xpAfter ?? "—"}</p><Link href="/learning" className="primary-btn mt-7">กลับเส้นทางการเรียน</Link>
+            <p className="mt-4 text-sm font-bold text-slate-600">XP คงเหลือ: {data.me.xpAfter ?? "—"}</p><Link href="/ranked" className="primary-btn mt-7">กลับเส้นทางการเรียน</Link>
           </div> : data.me.finished ? <div className="py-10 text-center">
             <LoaderCircle className="mx-auto animate-spin text-[#24a982]" size={38}/><h2 className="mt-4 text-xl font-extrabold">ส่งคำตอบครบแล้ว!</h2><p className="mt-2 text-sm leading-6 text-slate-500">กำลังรอคู่แข่งทำข้อสอบให้เสร็จ ระบบจะตัดสินผลและปรับ XP อัตโนมัติ</p><p className="mt-4 text-xs font-bold text-[#168565]">ตรวจสอบสถานะอัตโนมัติ</p>
           </div> : current ? <>

@@ -5,6 +5,25 @@ alter table public.rank_match_players
   add column if not exists score integer not null default 0 check (score >= 0),
   add column if not exists total_questions integer not null default 0 check (total_questions >= 0);
 
+-- A player may finish answering before the opponent. Keep result/XP fields
+-- null until the match is settled, but allow finished_at to be populated.
+alter table public.rank_match_players
+  drop constraint if exists rank_match_players_check;
+
+alter table public.rank_match_players
+  add constraint rank_match_players_check check (
+    (result is null
+      and xp_before is null
+      and xp_change is null
+      and xp_after is null)
+    or
+    (result is not null
+      and finished_at is not null
+      and xp_before is not null
+      and xp_change is not null
+      and xp_after is not null)
+  );
+
 create table if not exists public.rank_match_answers (
   match_id uuid not null,
   user_id uuid not null,

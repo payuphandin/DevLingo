@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BookOpen, ChartNoAxesCombined, House, Layers3, LogIn, LogOut, Sparkles, Volume2 } from "lucide-react";
+import { BookOpen, ChartNoAxesCombined, House, Layers3, LogIn, LogOut, Sparkles, Swords, Volume2 } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
 
 const items = [
   { href: "/", label: "หน้าหลัก", icon: House },
   { href: "/learning", label: "เส้นทางการเรียน", icon: Layers3 },
+  { href: "/ranked", label: "Rank Match", icon: Swords },
   { href: "/vocabulary", label: "คลังคำศัพท์", icon: BookOpen },
   { href: "/progress", label: "ความก้าวหน้า", icon: ChartNoAxesCombined },
 ];

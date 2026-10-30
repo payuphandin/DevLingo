@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpen, Check, Flame, Headphones, Lightbulb, Play, Sparkles, Target, Trophy, Zap } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Flame, Headphones, Lightbulb, Play, Sparkles, ShieldCheck, Swords, Target, Trophy, Users, Zap } from "lucide-react";
 import AppSidebar from "@/components/AppSidebar";
 import { loadLearnerProgress, emptyProgress, type LearnerProgress } from "@/lib/progress";
 
@@ -49,6 +49,49 @@ export default function HomePage() {
               <div className="progress-track"><div className="progress-fill" style={{width:`${Math.min(100,done*20)}%`}}/></div>
             </section>
           </div>
+          <section className="group relative isolate mt-5 overflow-hidden rounded-[30px] bg-gradient-to-br from-[#241443] via-[#392167] to-[#6845a6] p-6 text-white shadow-[0_22px_55px_rgba(73,47,123,.18)] md:p-8">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{backgroundImage:"radial-gradient(#ffffff 0.8px, transparent 0.8px)",backgroundSize:"18px 18px"}} />
+            <div className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full border-[42px] border-white/[0.07]" />
+            <div className="pointer-events-none absolute -right-2 -top-8 h-52 w-52 rounded-full border border-violet-100/10" />
+            <div className="pointer-events-none absolute right-24 top-8 h-28 w-28 rounded-full bg-fuchsia-300/20 blur-3xl" />
+            <div className="pointer-events-none absolute bottom-[-70px] left-[42%] h-48 w-48 rounded-full bg-violet-300/15 blur-3xl" />
+            <div className="relative z-10 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+              <div className="max-w-xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-violet-100/15 bg-white/10 px-3 py-1.5 text-xs font-extrabold tracking-wide text-violet-100 shadow-inner shadow-white/5">
+                  <Sparkles size={14} className="text-fuchsia-200" /> RANK MATCH <span className="text-violet-300">·</span> 1 VS 1
+                </span>
+                <h2 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">
+                  พร้อมดวลความรู้<br />ภาษาอังกฤษหรือยัง?
+                </h2>
+                <p className="mt-3 max-w-lg text-sm leading-6 text-violet-100/75">
+                  ท้าทายผู้เรียนคนอื่นในบทเรียนเดียวกัน ตอบคำถามให้ผ่านเกณฑ์ แล้วคว้า XP ไปด้วยกัน
+                </p>
+                <Link href="/ranked" className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#e9d5ff] px-5 py-3.5 font-extrabold text-[#392167] shadow-[0_5px_0_#a78bfa] transition hover:-translate-y-0.5 hover:bg-white active:translate-y-1 active:shadow-[0_2px_0_#a78bfa]">
+                  เข้าสู่สนาม Rank Match <ArrowRight size={17} />
+                </Link>
+              </div>
+              <div className="relative flex items-end justify-between gap-4 md:flex-col md:items-center">
+                <div className="absolute -right-2 top-[-34px] hidden h-24 w-24 rounded-full border border-fuchsia-100/20 md:block" />
+                <div className="flex gap-2">
+                  {["1", "V", "1"].map((letter, index) => (
+                    <div key={index} className={`flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 font-extrabold shadow-lg shadow-black/10 ${index === 1 ? "bg-[#e9d5ff] text-[#392167]" : "bg-white/10 text-violet-100"}`}>
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+                <div className="relative mr-2 flex h-24 w-24 rotate-6 items-center justify-center rounded-[30px] border border-white/50 bg-gradient-to-br from-[#f5d0fe] to-[#c4b5fd] text-[#4c1d95] shadow-[0_16px_35px_rgba(18,8,42,.25)] transition duration-300 group-hover:rotate-0 md:mr-0 md:h-28 md:w-28">
+                  <div className="absolute inset-2 rounded-[23px] border border-white/50" />
+                  <Swords size={46} strokeWidth={2.5} />
+                  <Sparkles size={15} className="absolute -right-2 -top-2 text-fuchsia-100" />
+                </div>
+              </div>
+            </div>
+            <div className="relative mt-6 flex flex-wrap gap-2 text-xs font-bold text-violet-100">
+              <span className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-sm"><Users size={15} /> 2 ผู้เล่น</span>
+              <span className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-sm"><Trophy size={15} /> ผู้ชนะรับ 1.5× XP</span>
+              <span className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-sm"><ShieldCheck size={15} /> ผลการแข่งขันอัตโนมัติ</span>
+            </div>
+          </section>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             <div className="panel flex items-center gap-4 p-5"><div className="rounded-2xl bg-[#fff0dc] p-3 text-orange-500"><Zap size={22} fill="currentColor"/></div><div><p className="text-xs font-semibold text-slate-400">XP สะสม</p><p className="mt-1 text-2xl font-extrabold">{progress.xp}<span className="ml-1 text-sm font-semibold text-slate-400">XP</span></p></div></div>
             <div className="panel flex items-center gap-4 p-5"><div className="rounded-2xl bg-[#e4f7ed] p-3 text-emerald-600"><Check size={22}/></div><div><p className="text-xs font-semibold text-slate-400">บทเรียนที่จบแล้ว</p><p className="mt-1 text-2xl font-extrabold">{done}<span className="ml-1 text-sm font-semibold text-slate-400">บท</span></p></div></div>
