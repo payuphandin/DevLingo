@@ -173,33 +173,32 @@ function LessonRunner() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "ตรวจคำตอบไม่สำเร็จ");
 
-      setCheckedResult({
+      const result: CheckedAnswer = {
         correct: Boolean(payload.correct),
         correctOptionPosition: Number(payload.correctOptionPosition),
-      });
+      };
+      setCheckedResult(result);
       setChecked(true);
+
+      // บันทึกผลและไปข้อถัดไปอัตโนมัติหลังแสดงผลตรวจคำตอบสั้น ๆ
+      const finalAnswers = [...answers, result.correct];
+      setAnswers(finalAnswers);
+      await new Promise((resolve) => setTimeout(resolve, 650));
+
+      if (index === questions.length - 1) {
+        await finish(finalAnswers);
+      } else {
+        setIndex((currentIndex) => currentIndex + 1);
+        setSelected(null);
+        setChecked(false);
+        setCheckedResult(null);
+        setSaveError("");
+      }
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : "ตรวจคำตอบไม่สำเร็จ");
     } finally {
       setChecking(false);
     }
-  };
-
-  const next = () => {
-    if (!question || !checkedResult) return;
-    const finalAnswers = [...answers, checkedResult.correct];
-    setAnswers(finalAnswers);
-
-    if (index === questions.length - 1) {
-      void finish(finalAnswers);
-      return;
-    }
-
-    setIndex((currentIndex) => currentIndex + 1);
-    setSelected(null);
-    setChecked(false);
-    setCheckedResult(null);
-    setSaveError("");
   };
 
   if (loading || (!ready && !saveError)) {
@@ -355,8 +354,8 @@ function LessonRunner() {
               {checking ? "กำลังตรวจคำตอบ…" : "ตรวจคำตอบ"} <ArrowRight size={17} />
             </button>
           ) : (
-            <button onClick={next} className="primary-btn">
-              {index === questions.length - 1 ? "ดูผลลัพธ์" : "ข้อต่อไป"} <ArrowRight size={17} />
+            <button disabled className="primary-btn disabled:cursor-wait disabled:opacity-70">
+              {checking ? "กำลังไปต่อ…" : "ตรวจแล้ว"} <ArrowRight size={17} />
             </button>
           )}
         </div>
